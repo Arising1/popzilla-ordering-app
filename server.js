@@ -5,7 +5,10 @@ const Stripe = require("stripe");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const DATA = path.join(__dirname, "orders.json");const PORT = process.env.PORT || 3000;
 const DATA = path.join(__dirname, "orders.json");
+const PRODUCTS = path.join(__dirname, "products.json");
+const stripe = process.env.STRIPE_SECRET_KEY
 const stripe = process.env.STRIPE_SECRET_KEY
   ? Stripe(process.env.STRIPE_SECRET_KEY)
   : null;
