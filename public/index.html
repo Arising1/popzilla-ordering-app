@@ -50,7 +50,19 @@ main{max-width:1100px;margin:auto;padding:0 20px 50px}.section-title{margin-top:
 <input class="field" id="name" placeholder="Your name">
 <input class="field" id="phone" placeholder="Phone">
 <input class="field" id="email" type="email" placeholder="Email (optional)">
-<select class="field" id="method" onchange="renderCart()"><option value="pickup">Pickup — South Pekin</option><option value="delivery">Local delivery — $5.00</option></select>
+<select class="field" id="method" onchange="renderCart()">
+<option value="pickup">Pickup — South Pekin</option>
+<option value="delivery">Local delivery — $5.00</option>
+</select>
+
+<select class="field" id="pickupTime">
+<option value="">Select pickup time</option>
+<option value="4:00 PM">4:00 PM</option>
+<option value="4:30 PM">4:30 PM</option>
+<option value="5:00 PM">5:00 PM</option>
+<option value="5:30 PM">5:30 PM</option>
+<option value="6:00 PM">6:00 PM</option>
+</select>
 <input class="field" id="address" placeholder="Delivery address (required for delivery)" style="display:none">
 <div class="actions"><button class="primary" onclick="payOnline()">💳 Pay Online</button><button class="secondary" onclick="payPickup()">💵 Pay at Pickup</button></div>
 <button class="secondary" style="width:100%;margin-top:8px" onclick="toggleCart()">Close</button>
@@ -76,8 +88,31 @@ function draw(cat,id){document.getElementById(id).innerHTML=products.filter(p=>p
 draw("popcorn","popcorn");draw("fudge","fudge");draw("shakeups","shakeups");
 function add(p){let x=cart.find(i=>i.name===p.name);x?x.qty++:cart.push({...p,qty:1});renderCart();toggleCart(true)}
 function renderCart(){document.getElementById("count").textContent=cart.reduce((s,i)=>s+i.qty,0);let total=cart.reduce((s,i)=>s+i.price*i.qty,0);document.getElementById("subtotal").textContent=money(total);
-document.getElementById("cartitems").innerHTML=cart.length?cart.map((i,n)=>`<div class="row"><span>${i.name} × ${i.qty}</span><b>$${money(i.price*i.qty)}</b></div>`).join(""):"Your cart is empty.";
-document.getElementById("address").style.display=document.getElementById("method").value==="delivery"?"block":"none"}
+docuconst method=document.getElementById("method").value;
+const fee=method==="delivery"?5:0;
+const pickupTime=document.getElementById("pickupTime").value;
+
+if(method==="delivery"&&!document.getElementById("address").value)
+return alert("Please enter your delivery address.");
+
+if(method==="pickup"&&!pickupTime)
+return alert("Please select a pickup time.");
+
+const order={
+items:cart,
+customer,
+fulfillment:{
+method,
+fee,
+address:document.getElementById("address").value,
+pickupTime
+},
+payment
+};ment.getElementById("cartitems").innerHTML=cart.length?cart.map((i,n)=>`<div class="row"><span>${i.name} × ${i.qty}</span><b>$${money(i.price*i.qty)}</b></div>`).join(""):"Your cart is empty.";
+
+document.getElementById("address").style.display=delivery?"block":"none";
+document.getElementById("pickupTime").style.display=delivery?"none":"block";
+}
 function toggleCart(force){document.getElementById("cartbox").classList.toggle("open",force===true?true:undefined);renderCart()}
 async function makeOrder(payment){if(!cart.length)return alert("Please add something to your order.");
 const customer={name:document.getElementById("name").value,phone:document.getElementById("phone").value,email:document.getElementById("email").value};
