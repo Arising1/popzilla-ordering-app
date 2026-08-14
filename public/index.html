@@ -69,60 +69,7 @@ main{max-width:1100px;margin:auto;padding:0 20px 50px}.section-title{margin-top:
 <div id="message"></div>
 </div>
 
-<script>
-const products=[
-{name:"Caramel Popcorn",price:7.95,cat:"popcorn"},
-{name:"Chicago Mix",price:7.95,cat:"popcorn"},
-{name:"Cheese Popcorn",price:7.95,cat:"popcorn"},
-{name:"Dill Pickle Popcorn",price:7.95,cat:"popcorn"},
-{name:"Buffalo Breath",price:7.95,cat:"popcorn"},
-{name:"Chocolate Drizzle Kettle Corn",price:7.95,cat:"popcorn"},
-{name:"Chocolate Fudge — 4 oz",price:6,cat:"fudge"},
-{name:"Peanut Butter Fudge — 4 oz",price:6,cat:"fudge"},
-{name:"Rocky Road Fudge — 4 oz",price:6,cat:"fudge"},
-{name:"Lemon Shake Up — 16 oz",price:4,cat:"shakeups"},
-{name:"Lemon Shake Up — 32 oz",price:5,cat:"shakeups"}];
-let cart=[];
-function money(n){return Number(n).toFixed(2)}
-function draw(cat,id){document.getElementById(id).innerHTML=products.filter(p=>p.cat===cat).map((p,i)=>`<div class="card"><h3>${p.name}</h3><div class="price">$${money(p.price)}</div><button onclick='add(${JSON.stringify(p)})'>Add to Order</button></div>`).join("")}
-draw("popcorn","popcorn");draw("fudge","fudge");draw("shakeups","shakeups");
-function add(p){let x=cart.find(i=>i.name===p.name);x?x.qty++:cart.push({...p,qty:1});renderCart();toggleCart(true)}
-function renderCart(){document.getElementById("count").textContent=cart.reduce((s,i)=>s+i.qty,0);let total=cart.reduce((s,i)=>s+i.price*i.qty,0);document.getElementById("subtotal").textContent=money(total);
-docuconst method=document.getElementById("method").value;
-const fee=method==="delivery"?5:0;
-const pickupTime=document.getElementById("pickupTime").value;
-
-if(method==="delivery"&&!document.getElementById("address").value)
-return alert("Please enter your delivery address.");
-
-if(method==="pickup"&&!pickupTime)
-return alert("Please select a pickup time.");
-
-const order={
-items:cart,
-customer,
-fulfillment:{
-method,
-fee,
-address:document.getElementById("address").value,
-pickupTime
-},
-payment
-};ment.getElementById("cartitems").innerHTML=cart.length?cart.map((i,n)=>`<div class="row"><span>${i.name} × ${i.qty}</span><b>$${money(i.price*i.qty)}</b></div>`).join(""):"Your cart is empty.";
-
-document.getElementById("address").style.display=delivery?"block":"none";
-document.getElementById("pickupTime").style.display=delivery?"none":"block";
-}
-function toggleCart(force){document.getElementById("cartbox").classList.toggle("open",force===true?true:undefined);renderCart()}
-async function makeOrder(payment){if(!cart.length)return alert("Please add something to your order.");
-const customer={name:document.getElementById("name").value,phone:document.getElementById("phone").value,email:document.getElementById("email").value};
-if(!customer.name||!customer.phone)return alert("Please enter your name and phone.");
-const method=document.getElementById("method").value;const fee=method==="delivery"?5:0;
-if(method==="delivery"&&!document.getElementById("address").value)return alert("Please enter your delivery address.");
-const order={items:cart,customer,fulfillment:{method,fee,address:document.getElementById("address").value},payment};
-const r=await fetch("/api/orders",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(order)});const saved=await r.json();return saved}
-async function payPickup(){const o=await makeOrder("pay_at_pickup");if(o){document.getElementById("message").innerHTML=`<div class="notice">Order <b>${o.id}</b> received! We'll prepare it for ${o.fulfillment.method==="pickup"?"pickup":"delivery"}.</div>`;cart=[];renderCart()}}
-async function payOnline(){const o=await makeOrder("stripe");if(!o)return;const r=await fetch("/api/create-checkout-session",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({items:o.items,customer:o.customer,fulfillment:o.fulfillment})});const data=await r.json();if(data.url)location.href=data.url;else alert(data.error||"Online payment is not configured yet.")}
+eOrder("stripe");if(!o)return;const r=await fetch("/api/create-checkout-session",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({items:o.items,customer:o.customer,fulfillment:o.fulfillment})});const data=await r.json();if(data.url)location.href=data.url;else alert(data.error||"Online payment is not configured yet.")}
 <script>
 const products=[
 {name:"Caramel Popcorn",price:7.95,cat:"popcorn"},
