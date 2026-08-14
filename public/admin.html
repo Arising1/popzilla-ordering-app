@@ -285,7 +285,51 @@ input{
     <div id="orders"></div>
 
   </div>
+  <div class="panel">
+    <div class="top">
+      <h2>🛍️ Products & Prices</h2>
+      <button class="gold" onclick="loadProducts()">↻ Refresh Products</button>
+    </div>
 
+    <div style="margin:15px 0;padding:15px;background:#f6f6f6;border-radius:12px">
+      <h3 style="margin-top:0">➕ Add Product</h3>
+
+      <input
+        id="productName"
+        placeholder="Product name"
+      >
+
+      <input
+        id="productPrice"
+        type="number"
+        step="0.01"
+        min="0"
+        placeholder="Price"
+      >
+
+      <select
+        id="productCategory"
+        style="padding:12px;border:1px solid #ccc;border-radius:9px;width:100%;margin:6px 0"
+      >
+        <option value="popcorn">🍿 Popcorn</option>
+        <option value="fudge">🍫 Fudge</option>
+        <option value="shakeups">🍋 Lemon Shake Ups</option>
+        <option value="other">📦 Other</option>
+      </select>
+
+      <button
+        class="primary"
+        style="margin-top:8px"
+        onclick="addProduct()"
+      >
+        ➕ Add Product
+      </button>
+    </div>
+
+    <div id="products"></div>
+
+    <div id="productMessage"></div>
+  </div>
 </div>
 
 </main>
@@ -464,7 +508,7 @@ async function login(){
     enableAlerts();
 
     load();
-
+loadProducts();
   }else{
 
     document
@@ -1101,7 +1145,398 @@ setInterval(
   15000
 );
 
+
+// ==================== PRODUCT MANAGEMENT ====================
+
+async function loadProducts() {
+  const box = document.getElementById("products");
+
+  box.innerHTML =
+    '<div class="notice">Loading products...</div>';
+
+  try {
+    const response = await fetch(
+      "/api/admin/products",
+      {
+        headers: {
+          "x-admin-pin": pin
+        }
+      }
+    );
+
+    if (!response.ok) {
+      box.innerHTML =
+        '<div class="notice">Could not load products.</div>';
+      return;
+    }
+
+    const products = await response.json();
+
+    if (!products.length) {
+      box.innerHTML =
+        '<div class="notice">No products yet. Add your first product above.</div>';
+      return;
+    }
+
+    box.innerHTML = products.map(product => `
+      <div
+        style="
+          border:1px solid #ddd;
+          border-radius:12px;
+          padding:14px;
+          margin:10px 0;
+        "
+      >
+
+        <div
+          style="
+            display:grid;
+            grid-template-columns:2fr 1fr 1fr;
+            gap:8px;
+            align-items:center;
+          "
+        >
+
+          <input
+            id="name-${product.id}"
+            value="${escapeHtml(product.name)}"
+            placeholder="Product name"
+          >
+
+          <input
+            id="price-${product.id}"
+            type="number"
+            step="0.01"
+            min="0"
+            value="${Number(product.price).toFixed(2)}"
+          >
+
+          <select
+            id="category-${product.id}"
+            style="
+              padding:12px;
+              border:1px solid #ccc;
+              border-radius:9px;
+            "
+          >
+            <option value="popcorn" ${product.category === "popcorn" ? "selected" : ""}>
+              🍿 Popcorn
+            </option>
+
+            <option value="fudge" ${product.category === "fudge" ? "selected" : ""}>
+              🍫 Fudge
+            </option>
+
+            <option value="shakeups" ${product.category === "shakeups" ? "selected" : ""}>
+              🍋 Lemon Shake Ups
+            </option>
+
+            <option value="other" ${product.category === "other" ? "selected" : ""}>
+              📦 Other
+            </option>
+          </select>
+
+        </div>
+
+        <div
+          style="
+            display:flex;
+            gap:8px;
+            flex-wrap:wrap;
+            margin-top:10px;
+          "
+        >
+
+          <button
+            class="primary"
+            onclick="saveProduct('${product.id}')"
+          >
+            💾 Save
+          </button>
+
+          <button
+            class="muted"
+            onclick="toggleProduct('${product.id}', ${!product.active})"
+          >
+            ${product.active ? "🔴 Deactivate" : "🟢 Activate"}
+          </button>
+
+          <button
+            class="muted"
+            onclick="deleteProduct('${product.id}', '${escapeHtml(product.name)}')"
+          >
+            🗑️ Delete
+          </button>
+
+          <span
+            style="
+              padding:11px;
+              font-weight:800;
+            "
+          >
+            ${product.active ? "🟢 Active" : "⚪ Inactive"}
+          </span>
+
+        </div>
+
+      </div>
+    `).join("");
+
+  } catch (error) {
+    console.error(error);
+
+    box.innerHTML =
+      '<div class="notice">Error loading products.</div>';
+  }
+}
+
+
+// Add a new product
+
+async function addProduct() {
+
+  const name =
+    document.getElementById("productName").value.trim();
+
+  const price =
+    Number(
+      document.getElementById("productPrice").value
+    );
+
+  const category =
+    document.getElementById("productCategory").value;
+
+  if (!name) {
+    alert("Please enter a product name.");
+    return;
+  }
+
+  if (!Number.isFinite(price) || price < 0) {
+    alert("Please enter a valid price.");
+    return;
+  }
+
+  try {
+
+    const response = await fetch(
+      "/api/admin/products",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-pin": pin
+        },
+
+        body: JSON.stringify({
+          name,
+          price,
+          category,
+          active: true
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.error || "Could not add product.");
+      return;
+    }
+
+    document.getElementById("productName").value = "";
+    document.getElementById("productPrice").value = "";
+
+    document.getElementById("productMessage").innerHTML =
+      '<div class="notice">✅ Product added.</div>';
+
+    loadProducts();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert("Could not connect to the server.");
+  }
+}
+
+
+// Save an edited product
+
+async function saveProduct(id) {
+
+  const name =
+    document.getElementById(
+      "name-" + id
+    ).value.trim();
+
+  const price =
+    Number(
+      document.getElementById(
+        "price-" + id
+      ).value
+    );
+
+  const category =
+    document.getElementById(
+      "category-" + id
+    ).value;
+
+  if (!name) {
+    alert("Product name cannot be empty.");
+    return;
+  }
+
+  if (!Number.isFinite(price) || price < 0) {
+    alert("Please enter a valid price.");
+    return;
+  }
+
+  try {
+
+    const response = await fetch(
+      "/api/admin/products/" +
+      encodeURIComponent(id),
+      {
+        method: "PATCH",
+
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-pin": pin
+        },
+
+        body: JSON.stringify({
+          name,
+          price,
+          category
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.error || "Could not save product.");
+      return;
+    }
+
+    document.getElementById("productMessage").innerHTML =
+      '<div class="notice">✅ Product updated.</div>';
+
+    loadProducts();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert("Could not connect to the server.");
+  }
+}
+
+
+// Activate / deactivate product
+
+async function toggleProduct(id, active) {
+
+  try {
+
+    const response = await fetch(
+      "/api/admin/products/" +
+      encodeURIComponent(id),
+      {
+        method: "PATCH",
+
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-pin": pin
+        },
+
+        body: JSON.stringify({
+          active
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.error || "Could not update product.");
+      return;
+    }
+
+    loadProducts();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert("Could not connect to the server.");
+  }
+}
+
+
+// Delete product
+
+async function deleteProduct(id, name) {
+
+  if (
+    !confirm(
+      "Delete " + name + " permanently?"
+    )
+  ) {
+    return;
+  }
+
+  try {
+
+    const response = await fetch(
+      "/api/admin/products/" +
+      encodeURIComponent(id),
+      {
+        method: "DELETE",
+
+        headers: {
+          "x-admin-pin": pin
+        }
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.error || "Could not delete product.");
+      return;
+    }
+
+    document.getElementById("productMessage").innerHTML =
+      '<div class="notice">✅ Product deleted.</div>';
+
+    loadProducts();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert("Could not connect to the server.");
+  }
+}
+
+
+// Protect product names from breaking the HTML
+
+function escapeHtml(value) {
+
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
 </script>
+
 
 </body>
 </html>
