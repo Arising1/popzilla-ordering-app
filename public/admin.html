@@ -285,7 +285,28 @@ input{
     <div id="orders"></div>
 
   </div>
-  <div class="panel">
+<div class="panel">
+  <h2>📂 Product Categories</h2>
+
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin:15px 0">
+    <input
+      id="newCategory"
+      placeholder="New category name"
+      style="flex:1;min-width:220px"
+    >
+
+    <button
+      class="primary"
+      onclick="addCategory()"
+    >
+      ➕ Add Category
+    </button>
+  </div>
+
+  <div id="categoryList"></div>
+</div>
+
+<div class="panel">
     <div class="top">
       <h2>🛍️ Products & Prices</h2>
       <button class="gold" onclick="loadProducts()">↻ Refresh Products</button>
@@ -307,15 +328,12 @@ input{
         placeholder="Price"
       >
 
-      <select
-        id="productCategory"
-        style="padding:12px;border:1px solid #ccc;border-radius:9px;width:100%;margin:6px 0"
-      >
-        <option value="popcorn">🍿 Popcorn</option>
-        <option value="fudge">🍫 Fudge</option>
-        <option value="shakeups">🍋 Lemon Shake Ups</option>
-        <option value="other">📦 Other</option>
-      </select>
+     <select
+  id="productCategory"
+  style="padding:12px;border:1px solid #ccc;border-radius:9px;width:100%;margin:6px 0"
+>
+  <option value="">Select Category</option>
+</select>
 
       <button
         class="primary"
@@ -507,8 +525,9 @@ async function login(){
 
     enableAlerts();
 
-    load();
+ load();
 loadProducts();
+loadCategories();
   }else{
 
     document
@@ -1534,7 +1553,82 @@ function escapeHtml(value) {
     .replace(/'/g, "&#039;");
 }
 
+// ==================== CATEGORY MANAGEMENT ====================
 
+async function loadCategories() {
+  const box =
+    document.getElementById("categoryList");
+
+  if (!box) return;
+
+  try {
+    const response = await fetch(
+      "/api/admin/products",
+      {
+        headers: {
+          "x-admin-pin": pin
+        }
+      }
+    );
+
+    if (!response.ok) return;
+
+    const products = await response.json();
+
+    const categories = [];
+
+    products.forEach(product => {
+      if (
+        product.category &&
+        !categories.includes(product.category)
+      ) {
+        categories.push(product.category);
+      }
+    });
+
+    if (!categories.length) {
+      box.innerHTML =
+        '<div class="notice">No categories yet.</div>';
+      return;
+    }
+
+    box.innerHTML =
+      categories.map(category => `
+        <span style="
+          display:inline-block;
+          background:#eee;
+          padding:8px 12px;
+          border-radius:20px;
+          margin:4px;
+          font-weight:800;
+        ">
+          ${escapeHtml(category)}
+        </span>
+      `).join("");
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+async function addCategory() {
+  const input =
+    document.getElementById("newCategory");
+
+  const name =
+    input.value.trim();
+
+  if (!name) {
+    alert("Please enter a category name.");
+    return;
+  }
+
+  alert(
+    "Category name entered: " + name +
+    "\n\nWe will connect this to the product system next."
+  );
+
+  input.value = "";
+}
 </script>
 
 
