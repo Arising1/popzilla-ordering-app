@@ -1,1 +1,80 @@
 
+[
+  {
+    "id": "caramel-popcorn",
+    "name": "Caramel Popcorn",
+    "price": 7.95,
+    "category": "popcorn",
+    "active": true
+  },
+  {
+    "id": "chicago-mix",
+    "name": "Chicago Mix",
+    "price": 7.95,
+    "category": "popcorn",
+    "active": true
+  },
+  {
+    "id": "cheese-popcorn",
+    "name": "Cheese Popcorn",
+    "price": 7.95,
+    "category": "popcorn",
+    "active": true
+  },
+  {
+    "id": "dill-pickle-popcorn",
+    "name": "Dill Pickle Popcorn",
+    "price": 7.95,
+    "category": "popcorn",
+    "active": true
+  },
+  {
+    "id": "buffalo-breath",
+    "name": "Buffalo Breath",
+    "price": 7.95,
+    "category": "popcorn",
+    "active": true
+  },
+  {
+    "id": "chocolate-drizzle-kettle-corn",
+    "name": "Chocolate Drizzle Kettle Corn",
+    "price": 7.95,
+    "category": "popcorn",
+    "active": true
+  },
+  {
+    "id": "chocolate-fudge-4oz",
+    "name": "Chocolate Fudge — 4 oz",
+    "price": 6.00,
+    "category": "fudge",
+    "active": true
+  },
+  {
+    "id": "peanut-butter-fudge-4oz",
+    "name": "Peanut Butter Fudge — 4 oz",
+    "price": 6.00,
+    "category": "fudge",
+    "active": true
+  },
+  {
+    "id": "rocky-road-fudge-4oz",
+    "name": "Rocky Road Fudge — 4 oz",
+    "price": 6.00,
+    "category": "fudge",
+    "active": true
+  },
+  {
+    "id": "lemon-shake-up-16oz",
+    "name": "Lemon Shake Up — 16 oz",
+    "price": 4.00,
+    "category": "shakeups",
+    "active": true
+  },
+  {
+    "id": "lemon-shake-up-32oz",
+    "name": "Lemon Shake Up — 32 oz",
+    "price": 5.00,
+    "category": "shakeups",
+    "active": true
+  }
+]
