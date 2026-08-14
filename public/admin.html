@@ -645,15 +645,27 @@ async function load(){
             : ""
           }
 
-          <p>
-            <b>Method:</b>
-            ${
-              order.fulfillment?.method ===
-              "delivery"
-              ? "🚗 Local Delivery"
-              : "📍 Pickup"
-            }
-          </p>
+       <p>
+  <b>Method:</b>
+  ${
+    order.fulfillment?.method ===
+    "delivery"
+    ? "🚗 Local Delivery"
+    : "📍 Pickup"
+  }
+</p>
+
+${
+  order.fulfillment?.method === "pickup" &&
+  order.fulfillment?.pickupTime
+  ? `
+    <p>
+      <b>🕐 Pickup Time:</b>
+      ${order.fulfillment.pickupTime}
+    </p>
+  `
+  : ""
+}
 
           <ul class="items">
 
