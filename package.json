@@ -1,0 +1,12 @@
+{
+  "name": "popzilla-ordering-app",
+  "version": "4.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "stripe": "^18.4.0"
+  }
+}

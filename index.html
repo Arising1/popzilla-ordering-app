@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Popzilla Gourmet Popcorn & Fudge</title>
+<style>
+:root{--red:#d71920;--gold:#f5b82e;--dark:#191919;--cream:#fff8e8}
+*{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--cream);color:var(--dark)}
+header{background:#111;color:white;padding:14px 20px;position:sticky;top:0;z-index:10;box-shadow:0 2px 10px #0002}
+.nav{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:900}.brand img{width:54px;height:54px;object-fit:contain}.brand span{font-size:18px}
+button{border:0;border-radius:10px;padding:12px 16px;font-weight:800;cursor:pointer}.cart{background:var(--gold)}
+.hero{max-width:1100px;margin:0 auto;padding:30px 20px;display:grid;grid-template-columns:1.2fr .8fr;gap:25px;align-items:center}
+.hero h1{font-size:46px;line-height:1;margin:0 0 12px}.hero p{font-size:19px}.hero img{width:100%;max-height:280px;object-fit:contain}
+main{max-width:1100px;margin:auto;padding:0 20px 50px}.section-title{margin-top:30px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.card{background:white;border-radius:16px;padding:18px;box-shadow:0 4px 15px #0001}.card h3{margin:0 0 8px}.price{font-size:22px;font-weight:900;margin:12px 0}.card button{background:var(--red);color:white;width:100%}
+.cartbox{position:fixed;right:18px;bottom:18px;width:min(390px,calc(100vw - 36px));background:white;border-radius:18px;padding:20px;box-shadow:0 8px 35px #0004;z-index:20;display:none}.cartbox.open{display:block}
+.row{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid #eee}.total{font-size:20px;font-weight:900;margin:12px 0}.field{width:100%;padding:11px;border:1px solid #ccc;border-radius:9px;margin:5px 0}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.primary{background:var(--red);color:#fff}.secondary{background:#eee}
+.admin{max-width:1100px;margin:20px auto;padding:20px}.admin table{width:100%;background:white;border-collapse:collapse}.admin td,.admin th{padding:10px;border-bottom:1px solid #ddd;text-align:left}
+.notice{padding:12px;border-radius:10px;background:#fff3cd;margin:12px 0}
+@media(max-width:700px){.hero{grid-template-columns:1fr}.hero h1{font-size:36px}.brand span{display:none}}
+</style>
+</head>
+<body>
+<header><div class="nav">
+<div class="brand"><img src="popzilla-logo.png"><span>POPZILLA GOURMET POPCORN & FUDGE</span></div>
+<button class="cart" onclick="toggleCart()">🛒 Cart <span id="count">0</span></button>
+</div></header>
+
+<section class="hero">
+<div><h1>Fresh. Fun. Poppin'.</h1><p>Order Popzilla Gourmet Popcorn, Fudge and Lemon Shake Ups for pickup or local delivery.</p><button class="primary" onclick="document.querySelector('#menu').scrollIntoView({behavior:'smooth'})">ORDER NOW</button></div>
+<img src="popzilla-logo.png" alt="Popzilla logo">
+</section>
+
+<main id="menu">
+<h2 class="section-title">🍿 Gourmet Popcorn</h2>
+<div class="grid" id="popcorn"></div>
+<h2 class="section-title">🍫 Gourmet Fudge</h2>
+<div class="grid" id="fudge"></div>
+<h2 class="section-title">🍋 Lemon Shake Ups</h2>
+<div class="grid" id="shakeups"></div>
+</main>
+
+<div class="cartbox" id="cartbox">
+<h2>Your Order</h2><div id="cartitems"></div>
+<div class="total">Subtotal: $<span id="subtotal">0.00</span></div>
+<input class="field" id="name" placeholder="Your name">
+<input class="field" id="phone" placeholder="Phone">
+<input class="field" id="email" type="email" placeholder="Email (optional)">
+<select class="field" id="method" onchange="renderCart()"><option value="pickup">Pickup — South Pekin</option><option value="delivery">Local delivery — $5.00</option></select>
+<input class="field" id="address" placeholder="Delivery address (required for delivery)" style="display:none">
+<div class="actions"><button class="primary" onclick="payOnline()">💳 Pay Online</button><button class="secondary" onclick="payPickup()">💵 Pay at Pickup</button></div>
+<button class="secondary" style="width:100%;margin-top:8px" onclick="toggleCart()">Close</button>
+<div id="message"></div>
+</div>
+
+<script>
+const products=[
+{name:"Caramel Popcorn",price:7.95,cat:"popcorn"},
+{name:"Chicago Mix",price:7.95,cat:"popcorn"},
+{name:"Cheese Popcorn",price:7.95,cat:"popcorn"},
+{name:"Dill Pickle Popcorn",price:7.95,cat:"popcorn"},
+{name:"Buffalo Breath",price:7.95,cat:"popcorn"},
+{name:"Chocolate Drizzle Kettle Corn",price:7.95,cat:"popcorn"},
+{name:"Chocolate Fudge — 4 oz",price:6,cat:"fudge"},
+{name:"Peanut Butter Fudge — 4 oz",price:6,cat:"fudge"},
+{name:"Rocky Road Fudge — 4 oz",price:6,cat:"fudge"},
+{name:"Lemon Shake Up — 16 oz",price:4,cat:"shakeups"},
+{name:"Lemon Shake Up — 32 oz",price:5,cat:"shakeups"}];
+let cart=[];
+function money(n){return Number(n).toFixed(2)}
+function draw(cat,id){document.getElementById(id).innerHTML=products.filter(p=>p.cat===cat).map((p,i)=>`<div class="card"><h3>${p.name}</h3><div class="price">$${money(p.price)}</div><button onclick='add(${JSON.stringify(p)})'>Add to Order</button></div>`).join("")}
+draw("popcorn","popcorn");draw("fudge","fudge");draw("shakeups","shakeups");
+function add(p){let x=cart.find(i=>i.name===p.name);x?x.qty++:cart.push({...p,qty:1});renderCart();toggleCart(true)}
+function renderCart(){document.getElementById("count").textContent=cart.reduce((s,i)=>s+i.qty,0);let total=cart.reduce((s,i)=>s+i.price*i.qty,0);document.getElementById("subtotal").textContent=money(total);
+document.getElementById("cartitems").innerHTML=cart.length?cart.map((i,n)=>`<div class="row"><span>${i.name} × ${i.qty}</span><b>$${money(i.price*i.qty)}</b></div>`).join(""):"Your cart is empty.";
+document.getElementById("address").style.display=document.getElementById("method").value==="delivery"?"block":"none"}
+function toggleCart(force){document.getElementById("cartbox").classList.toggle("open",force===true?true:undefined);renderCart()}
+async function makeOrder(payment){if(!cart.length)return alert("Please add something to your order.");
+const customer={name:document.getElementById("name").value,phone:document.getElementById("phone").value,email:document.getElementById("email").value};
+if(!customer.name||!customer.phone)return alert("Please enter your name and phone.");
+const method=document.getElementById("method").value;const fee=method==="delivery"?5:0;
+if(method==="delivery"&&!document.getElementById("address").value)return alert("Please enter your delivery address.");
+const order={items:cart,customer,fulfillment:{method,fee,address:document.getElementById("address").value},payment};
+const r=await fetch("/api/orders",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(order)});const saved=await r.json();return saved}
+async function payPickup(){const o=await makeOrder("pay_at_pickup");if(o){document.getElementById("message").innerHTML=`<div class="notice">Order <b>${o.id}</b> received! We'll prepare it for ${o.fulfillment.method==="pickup"?"pickup":"delivery"}.</div>`;cart=[];renderCart()}}
+async function payOnline(){const o=await makeOrder("stripe");if(!o)return;const r=await fetch("/api/create-checkout-session",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({items:o.items,customer:o.customer,fulfillment:o.fulfillment})});const data=await r.json();if(data.url)location.href=data.url;else alert(data.error||"Online payment is not configured yet.")}
+</script>
+</body></html>
