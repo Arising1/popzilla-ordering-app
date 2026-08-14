@@ -729,7 +729,23 @@ ${
                 ? "💵 Pay at Pickup"
                 : "💳 Online"
               }
-            </b>
+            </b><b style="padding:9px">
+  ${
+    order.payment ===
+    "pay_at_pickup"
+    ? "💵 Pay at Pickup"
+    : "💳 Online"
+  }
+</b>
+
+<button
+  class="primary"
+  onclick='printOrder(${JSON.stringify(order)})'
+>
+  🖨️ PRINT ORDER
+</button>
+
+</div>
 
           </div>
 
@@ -747,7 +763,296 @@ ${
 
 }
 
+/* -----------------------------
+   PRINT ORDER
+----------------------------- */
 
+function printOrder(order){
+
+  const items = (order.items || [])
+    .map(item => `
+      <tr>
+        <td>${item.name}</td>
+        <td style="text-align:center">${item.qty}</td>
+        <td style="text-align:right">
+          $${money(item.price * item.qty)}
+        </td>
+      </tr>
+    `)
+    .join("");
+
+  const delivery =
+    order.fulfillment?.method === "delivery";
+
+  const pickupTime =
+    order.fulfillment?.pickupTime || "";
+
+  const fee =
+    Number(order.fulfillment?.fee || 0);
+
+  const subtotal =
+    (order.items || []).reduce(
+      (sum,item) =>
+        sum +
+        Number(item.price) *
+        Number(item.qty),
+      0
+    );
+
+  const printWindow =
+    window.open(
+      "",
+      "_blank",
+      "width=700,height=800"
+    );
+
+  if(!printWindow){
+
+    alert(
+      "Please allow pop-ups for the Popzilla dashboard."
+    );
+
+    return;
+  }
+
+  printWindow.document.write(`
+
+<!doctype html>
+
+<html>
+
+<head>
+
+<title>
+Popzilla Order ${order.id}
+</title>
+
+<style>
+
+body{
+  font-family:Arial,sans-serif;
+  padding:30px;
+  color:#111;
+}
+
+.header{
+  text-align:center;
+  border-bottom:3px solid #111;
+  padding-bottom:15px;
+  margin-bottom:20px;
+}
+
+.header h1{
+  margin:0;
+  font-size:26px;
+}
+
+.header p{
+  margin:5px 0;
+}
+
+.info{
+  margin-bottom:20px;
+  line-height:1.7;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:15px;
+}
+
+th,td{
+  padding:9px 5px;
+  border-bottom:1px solid #ccc;
+}
+
+th{
+  text-align:left;
+}
+
+.total{
+  font-size:20px;
+  font-weight:bold;
+  text-align:right;
+  margin-top:15px;
+  line-height:1.7;
+}
+
+.status{
+  margin-top:20px;
+  font-weight:bold;
+  font-size:18px;
+}
+
+@media print{
+
+  body{
+    padding:10px;
+  }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+<h1>
+POPZILLA GOURMET POPCORN & FUDGE
+</h1>
+
+<p>
+ORDER TICKET
+</p>
+
+<h2>
+${order.id}
+</h2>
+
+</div>
+
+<div class="info">
+
+<b>Customer:</b>
+${order.customer?.name || ""}
+
+<br>
+
+<b>Phone:</b>
+${order.customer?.phone || ""}
+
+<br>
+
+<b>Date:</b>
+${new Date(
+  order.createdAt
+).toLocaleString()}
+
+<br>
+
+<b>Order Type:</b>
+${
+  delivery
+  ? "🚗 LOCAL DELIVERY"
+  : "📍 PICKUP — SOUTH PEKIN"
+}
+
+${
+  !delivery && pickupTime
+  ? `
+    <br>
+    <b>🕐 Pickup Time:</b>
+    ${pickupTime}
+  `
+  : ""
+}
+
+${
+  delivery && order.fulfillment?.address
+  ? `
+    <br>
+    <b>Delivery Address:</b>
+    ${order.fulfillment.address}
+  `
+  : ""
+}
+
+<br>
+
+<b>Payment:</b>
+${
+  order.payment === "pay_at_pickup"
+  ? "💵 PAY AT PICKUP"
+  : "💳 PAID ONLINE"
+}
+
+</div>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Item</th>
+
+<th style="text-align:center">
+Qty
+</th>
+
+<th style="text-align:right">
+Price
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+${items}
+
+</tbody>
+
+</table>
+
+<div class="total">
+
+Subtotal:
+$${money(subtotal)}
+
+${
+  fee > 0
+  ? `
+    <br>
+    Delivery:
+    $${money(fee)}
+  `
+  : ""
+}
+
+<br>
+
+TOTAL:
+$${money(total(order))}
+
+</div>
+
+<div class="status">
+
+ORDER STATUS:
+${order.status}
+
+</div>
+
+<script>
+
+window.onload = function(){
+
+  setTimeout(
+    function(){
+      window.print();
+    },
+    300
+  );
+
+};
+
+<\/script>
+
+</body>
+
+</html>
+
+`);
+
+  printWindow.document.close();
+
+}
 /* -----------------------------
    CHANGE ORDER STATUS
 ----------------------------- */
