@@ -136,7 +136,19 @@ app.patch(
 );
 
 // ==================== PRODUCTS API ====================
+// Public products for customer store
+app.get(
+  "/api/products",
+  (req, res) => {
+    const products = readProducts();
 
+    res.json(
+      products.filter(
+        product => product.active !== false
+      )
+    );
+  }
+);
 // Get all products
 app.get(
   "/api/admin/products",
