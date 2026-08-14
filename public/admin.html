@@ -4,65 +4,787 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Popzilla Owner Dashboard</title>
+
 <style>
-:root{--red:#d71920;--gold:#f5b82e;--cream:#fff8e8}
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:var(--cream);color:#191919}
-header{background:#111;color:#fff;padding:14px 20px}.nav{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between}
-.brand{display:flex;align-items:center;gap:12px;font-weight:900}.brand img{width:52px;height:52px;object-fit:contain}
-main{max-width:1100px;margin:auto;padding:25px 20px}.panel{background:#fff;border-radius:16px;padding:20px;box-shadow:0 4px 15px #0001;margin-bottom:18px}
-.login{max-width:420px;margin:60px auto}input,select,button{font:inherit}input{padding:12px;border:1px solid #ccc;border-radius:9px;width:100%;margin:6px 0}
-button{border:0;border-radius:10px;padding:11px 15px;font-weight:800;cursor:pointer}.primary{background:var(--red);color:#fff}.gold{background:var(--gold)}.muted{background:#eee}
-.hidden{display:none}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.stat{background:#f6f6f6;border-radius:12px;padding:15px}.stat b{display:block;font-size:26px;margin-top:5px}
-.order{background:#fff;border:1px solid #ddd;border-radius:14px;padding:15px;margin:12px 0}.new{border:2px solid var(--gold)}
-.top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.items{padding-left:20px}.status{padding:9px;border:1px solid #ccc;border-radius:8px}.notice{padding:12px;background:#fff3cd;border-radius:10px;margin-top:10px}
-@media(max-width:600px){.stats{grid-template-columns:1fr}.top{display:block}}
+:root{
+  --red:#d71920;
+  --gold:#f5b82e;
+  --cream:#fff8e8;
+  --dark:#191919;
+  --green:#188038;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--cream);
+  color:var(--dark);
+}
+
+header{
+  background:#111;
+  color:#fff;
+  padding:14px 20px;
+}
+
+.nav{
+  max-width:1100px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-weight:900;
+}
+
+.brand img{
+  width:52px;
+  height:52px;
+  object-fit:contain;
+}
+
+button{
+  border:0;
+  border-radius:10px;
+  padding:11px 15px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.primary{
+  background:var(--red);
+  color:white;
+}
+
+.gold{
+  background:var(--gold);
+  color:#111;
+}
+
+.muted{
+  background:#eee;
+  color:#111;
+}
+
+main{
+  max-width:1100px;
+  margin:auto;
+  padding:25px 20px;
+}
+
+.panel{
+  background:#fff;
+  border-radius:16px;
+  padding:20px;
+  box-shadow:0 4px 15px #0001;
+  margin-bottom:18px;
+}
+
+.login{
+  max-width:420px;
+  margin:60px auto;
+}
+
+input{
+  padding:12px;
+  border:1px solid #ccc;
+  border-radius:9px;
+  width:100%;
+  margin:6px 0;
+}
+
+.hidden{
+  display:none;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+
+.stat{
+  background:#f6f6f6;
+  border-radius:12px;
+  padding:15px;
+}
+
+.stat b{
+  display:block;
+  font-size:26px;
+  margin-top:5px;
+}
+
+.order{
+  background:#fff;
+  border:1px solid #ddd;
+  border-radius:14px;
+  padding:15px;
+  margin:12px 0;
+}
+
+.order.new{
+  border:3px solid var(--gold);
+  box-shadow:0 0 15px #f5b82e88;
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.items{
+  padding-left:20px;
+}
+
+.status{
+  padding:9px;
+  border:1px solid #ccc;
+  border-radius:8px;
+}
+
+.notice{
+  padding:12px;
+  background:#fff3cd;
+  border-radius:10px;
+  margin-top:10px;
+}
+
+.alert{
+  background:var(--red);
+  color:#fff;
+  padding:16px;
+  border-radius:12px;
+  margin-bottom:18px;
+  font-size:20px;
+  font-weight:900;
+  text-align:center;
+  animation:flash 1s infinite;
+}
+
+@keyframes flash{
+  50%{opacity:.55}
+}
+
+.order-buttons{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+
+@media(max-width:600px){
+  .stats{
+    grid-template-columns:1fr;
+  }
+
+  .top{
+    display:block;
+  }
+
+  .brand span{
+    font-size:14px;
+  }
+}
 </style>
 </head>
+
 <body>
-<header><div class="nav"><div class="brand"><img src="/popzilla-logo.png"><span>POPZILLA OWNER DASHBOARD</span></div><button class="muted" onclick="location.href='/'">View Store</button></div></header>
+
+<header>
+  <div class="nav">
+    <div class="brand">
+      <img src="/popzilla-logo.png" alt="Popzilla">
+      <span>POPZILLA OWNER DASHBOARD</span>
+    </div>
+
+    <div>
+      <button class="gold" onclick="enableAlerts()">🔔 Enable Alerts</button>
+      <button class="muted" onclick="location.href='/'">View Store</button>
+    </div>
+  </div>
+</header>
+
 <main>
-<div id="login" class="panel login"><h2>🔐 Owner Login</h2><p>Enter your Popzilla admin PIN.</p><input id="pin" type="password" placeholder="Admin PIN"><button class="primary" style="width:100%" onclick="login()">Sign In</button><div id="msg"></div></div>
-<div id="dash" class="hidden">
-<div class="stats"><div class="stat">New Orders<b id="nc">0</b></div><div class="stat">Today's Orders<b id="tc">0</b></div><div class="stat">Today's Sales<b id="ts">$0.00</b></div></div>
-<div class="panel"><div class="top"><h2>📦 Orders</h2><button class="gold" onclick="load()">↻ Refresh</button></div><div id="orders"></div></div>
+
+<div id="login" class="panel login">
+  <h2>🔐 Owner Login</h2>
+  <p>Enter your Popzilla owner PIN.</p>
+
+  <input
+    id="pin"
+    type="password"
+    placeholder="Owner PIN"
+    autocomplete="off"
+  >
+
+  <button
+    class="primary"
+    style="width:100%"
+    onclick="login()"
+  >
+    Sign In
+  </button>
+
+  <div id="msg"></div>
 </div>
+
+<div id="dash" class="hidden">
+
+  <div id="newAlert" class="alert hidden">
+    🔔 NEW POPZILLA ORDER!
+    <br>
+    <small>Check the order below.</small>
+  </div>
+
+  <div class="stats">
+
+    <div class="stat">
+      New Orders
+      <b id="nc">0</b>
+    </div>
+
+    <div class="stat">
+      Today's Orders
+      <b id="tc">0</b>
+    </div>
+
+    <div class="stat">
+      Today's Sales
+      <b id="ts">$0.00</b>
+    </div>
+
+  </div>
+
+  <div class="panel">
+
+    <div class="top">
+      <h2>📦 Orders</h2>
+
+      <div>
+        <button class="gold" onclick="load()">
+          ↻ Refresh
+        </button>
+
+        <button class="muted" onclick="enableAlerts()">
+          🔔 Alerts
+        </button>
+      </div>
+    </div>
+
+    <div id="orders"></div>
+
+  </div>
+
+</div>
+
 </main>
+
 <script>
-let pin="";
-const money=n=>Number(n||0).toFixed(2);
-const total=o=>(o.items||[]).reduce((s,i)=>s+Number(i.price)*Number(i.qty),0)+Number(o.fulfillment?.fee||0);
+
+let pin = "";
+let previousOrderIds = null;
+let alertsEnabled = false;
+
+const money = n =>
+  Number(n || 0).toFixed(2);
+
+const total = order =>
+  (order.items || []).reduce(
+    (sum,item) =>
+      sum +
+      Number(item.price) *
+      Number(item.qty),
+    0
+  ) +
+  Number(order.fulfillment?.fee || 0);
+
+
+/* -----------------------------
+   ENABLE ALERT SOUND
+----------------------------- */
+
+function enableAlerts(){
+
+  alertsEnabled = true;
+
+  try{
+
+    const AudioContext =
+      window.AudioContext ||
+      window.webkitAudioContext;
+
+    if(AudioContext){
+
+      const audio =
+        new AudioContext();
+
+      const oscillator =
+        audio.createOscillator();
+
+      const gain =
+        audio.createGain();
+
+      oscillator.frequency.value = 880;
+      gain.gain.value = 0.05;
+
+      oscillator.connect(gain);
+      gain.connect(audio.destination);
+
+      oscillator.start();
+
+      oscillator.stop(
+        audio.currentTime + 0.15
+      );
+
+    }
+
+  }catch(e){}
+
+  alert(
+    "New-order alerts are enabled."
+  );
+}
+
+
+/* -----------------------------
+   NEW ORDER SOUND
+----------------------------- */
+
+function playAlert(){
+
+  if(!alertsEnabled) return;
+
+  try{
+
+    const AudioContext =
+      window.AudioContext ||
+      window.webkitAudioContext;
+
+    if(!AudioContext) return;
+
+    const audio =
+      new AudioContext();
+
+    const now =
+      audio.currentTime;
+
+    [880,1100,880].forEach(
+      (frequency,index)=>{
+
+        const oscillator =
+          audio.createOscillator();
+
+        const gain =
+          audio.createGain();
+
+        oscillator.frequency.value =
+          frequency;
+
+        gain.gain.setValueAtTime(
+          0.001,
+          now + index * 0.22
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+          0.15,
+          now + index * 0.22 + 0.02
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+          0.001,
+          now + index * 0.22 + 0.18
+        );
+
+        oscillator.connect(gain);
+        gain.connect(audio.destination);
+
+        oscillator.start(
+          now + index * 0.22
+        );
+
+        oscillator.stop(
+          now + index * 0.22 + 0.2
+        );
+
+      }
+    );
+
+  }catch(e){}
+
+}
+
+
+/* -----------------------------
+   LOGIN
+----------------------------- */
+
 async function login(){
- pin=document.getElementById("pin").value;
- const r=await fetch("/api/admin/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({pin})});
- if(r.ok){document.getElementById("login").classList.add("hidden");document.getElementById("dash").classList.remove("hidden");load();}
- else document.getElementById("msg").innerHTML='<div class="notice">Invalid PIN.</div>';
+
+  pin =
+    document.getElementById("pin").value;
+
+  const response =
+    await fetch(
+      "/api/admin/login",
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":
+            "application/json"
+        },
+        body:JSON.stringify({
+          pin:pin
+        })
+      }
+    );
+
+  if(response.ok){
+
+    document
+      .getElementById("login")
+      .classList
+      .add("hidden");
+
+    document
+      .getElementById("dash")
+      .classList
+      .remove("hidden");
+
+    enableAlerts();
+
+    load();
+
+  }else{
+
+    document
+      .getElementById("msg")
+      .innerHTML =
+      '<div class="notice">Invalid PIN.</div>';
+
+  }
+
 }
+
+
+/* -----------------------------
+   LOAD ORDERS
+----------------------------- */
+
 async function load(){
- const r=await fetch("/api/admin/orders",{headers:{"x-admin-pin":pin}});
- if(!r.ok){document.getElementById("orders").innerHTML='<div class="notice">Could not load orders.</div>';return}
- const os=await r.json();
- const today=new Date().toISOString().slice(0,10);
- const tod=os.filter(o=>String(o.createdAt||"").slice(0,10)===today);
- document.getElementById("nc").textContent=os.filter(o=>o.status==="New").length;
- document.getElementById("tc").textContent=tod.length;
- document.getElementById("ts").textContent="$"+money(tod.reduce((s,o)=>s+total(o),0));
- document.getElementById("orders").innerHTML=os.length?os.map(o=>`
- <div class="order ${o.status==="New"?"new":""}">
- <div class="top"><div><b>${o.id}</b><br>${new Date(o.createdAt).toLocaleString()}</div><div><b>$${money(total(o))}</b></div></div>
- <p><b>${o.customer?.name||""}</b> — ${o.customer?.phone||""}</p>
- ${o.fulfillment?.address?`<p><b>Address:</b> ${o.fulfillment.address}</p>`:""}
- <ul class="items">${(o.items||[]).map(i=>`<li>${i.name} × ${i.qty} — $${money(i.price*i.qty)}</li>`).join("")}</ul>
- <select class="status" onchange="setStatus('${o.id}',this.value)">
- ${["New","Confirmed","Ready","Completed"].map(x=>`<option ${o.status===x?"selected":""}>${x}</option>`).join("")}
- </select>
- <b>${o.payment==="pay_at_pickup"?"Pay at Pickup":"Online"}</b>
- </div>`).join(""):"<p>No orders yet.</p>";
+
+  try{
+
+    const response =
+      await fetch(
+        "/api/admin/orders",
+        {
+          headers:{
+            "x-admin-pin":pin
+          }
+        }
+      );
+
+    if(!response.ok){
+
+      document
+        .getElementById("orders")
+        .innerHTML =
+        '<div class="notice">Could not load orders.</div>';
+
+      return;
+
+    }
+
+    const orders =
+      await response.json();
+
+    /*
+      Detect orders that weren't
+      present during the previous check.
+    */
+
+    if(previousOrderIds !== null){
+
+      const newOrders =
+        orders.filter(
+          order =>
+            !previousOrderIds.includes(
+              order.id
+            )
+        );
+
+      if(newOrders.length > 0){
+
+        playAlert();
+
+        const alertBox =
+          document.getElementById(
+            "newAlert"
+          );
+
+        alertBox.classList.remove(
+          "hidden"
+        );
+
+        setTimeout(
+          () =>
+            alertBox.classList.add(
+              "hidden"
+            ),
+          15000
+        );
+
+      }
+
+    }
+
+    previousOrderIds =
+      orders.map(order => order.id);
+
+
+    /* Statistics */
+
+    const today =
+      new Date()
+        .toISOString()
+        .slice(0,10);
+
+    const todayOrders =
+      orders.filter(
+        order =>
+          String(
+            order.createdAt || ""
+          ).slice(0,10) === today
+      );
+
+    document.getElementById(
+      "nc"
+    ).textContent =
+      orders.filter(
+        order =>
+          order.status === "New"
+      ).length;
+
+    document.getElementById(
+      "tc"
+    ).textContent =
+      todayOrders.length;
+
+    document.getElementById(
+      "ts"
+    ).textContent =
+      "$" +
+      money(
+        todayOrders.reduce(
+          (sum,order) =>
+            sum + total(order),
+          0
+        )
+      );
+
+
+    /* Orders */
+
+    document.getElementById(
+      "orders"
+    ).innerHTML =
+      orders.length
+      ? orders.map(order => `
+
+        <div class="order ${
+          order.status === "New"
+            ? "new"
+            : ""
+        }">
+
+          <div class="top">
+
+            <div>
+              <b>${order.id}</b>
+              <br>
+              ${new Date(
+                order.createdAt
+              ).toLocaleString()}
+            </div>
+
+            <div>
+              <b>
+                $${money(total(order))}
+              </b>
+            </div>
+
+          </div>
+
+          <p>
+            <b>
+              ${order.customer?.name || ""}
+            </b>
+            —
+            ${order.customer?.phone || ""}
+          </p>
+
+          ${
+            order.fulfillment?.address
+            ? `
+              <p>
+                <b>Address:</b>
+                ${order.fulfillment.address}
+              </p>
+            `
+            : ""
+          }
+
+          <p>
+            <b>Method:</b>
+            ${
+              order.fulfillment?.method ===
+              "delivery"
+              ? "🚗 Local Delivery"
+              : "📍 Pickup"
+            }
+          </p>
+
+          <ul class="items">
+
+            ${
+              (order.items || [])
+              .map(item => `
+                <li>
+                  ${item.name}
+                  × ${item.qty}
+                  —
+                  $${money(
+                    item.price *
+                    item.qty
+                  )}
+                </li>
+              `)
+              .join("")
+            }
+
+          </ul>
+
+          <div class="order-buttons">
+
+            <select
+              class="status"
+              onchange="
+                setStatus(
+                  '${order.id}',
+                  this.value
+                )
+              "
+            >
+
+              ${
+                [
+                  "New",
+                  "Confirmed",
+                  "Ready",
+                  "Completed"
+                ]
+                .map(status => `
+                  <option
+                    ${
+                      order.status === status
+                      ? "selected"
+                      : ""
+                    }
+                  >
+                    ${status}
+                  </option>
+                `)
+                .join("")
+              }
+
+            </select>
+
+            <b style="padding:9px">
+              ${
+                order.payment ===
+                "pay_at_pickup"
+                ? "💵 Pay at Pickup"
+                : "💳 Online"
+              }
+            </b>
+
+          </div>
+
+        </div>
+
+      `).join("")
+
+      : "<p>No orders yet.</p>";
+
+  }catch(error){
+
+    console.error(error);
+
+  }
+
 }
-async function setStatus(id,status){
- await fetch("/api/orders/"+encodeURIComponent(id),{method:"PATCH",headers:{"Content-Type":"application/json","x-admin-pin":pin},body:JSON.stringify({status})});
- load();
+
+
+/* -----------------------------
+   CHANGE ORDER STATUS
+----------------------------- */
+
+async function setStatus(
+  id,
+  status
+){
+
+  await fetch(
+    "/api/orders/" +
+    encodeURIComponent(id),
+    {
+      method:"PATCH",
+      headers:{
+        "Content-Type":
+          "application/json",
+        "x-admin-pin":
+          pin
+      },
+      body:JSON.stringify({
+        status:status
+      })
+    }
+  );
+
+  load();
+
 }
-setInterval(()=>{if(pin)load()},15000);
+
+
+/* -----------------------------
+   CHECK EVERY 15 SECONDS
+----------------------------- */
+
+setInterval(
+  () => {
+
+    if(pin){
+
+      load();
+
+    }
+
+  },
+  15000
+);
+
 </script>
+
 </body>
 </html>
