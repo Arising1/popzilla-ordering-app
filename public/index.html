@@ -251,11 +251,7 @@ main{
 
 <main id="menu">
 
-  <h2 class="section-title">🍿 Gourmet Popcorn</h2>
-  <div class="grid" id="popcorn"></div>
 
-  <h2 class="section-title">🍫 Gourmet Fudge</h2>
-  <div class="grid" id="fudge"></div>
 
  
 
@@ -385,16 +381,47 @@ async function loadProducts(){
         product => product.active !== false
       );
 
-    draw("popcorn","popcorn");
-    draw("fudge","fudge");
+  const categories = [
+  ...new Set(
+    products.map(p => p.category || p.cat)
+  )
+];
+
+const menu = document.getElementById("menu");
+
+categories.forEach(category => {
+  const section = document.createElement("section");
+
+const categoryId =
+  "category-" +
+  category
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
+section.innerHTML = `
+  <h2 class="section-title">
+    ${escapeHtml(category)}
+  </h2>
+  <div class="grid" id="${categoryId}"></div>
+`;
+
+menu.appendChild(section);
+
+draw(
+  category,
+  categoryId
+
+  );
+});
   
 
   }catch(error){
 
     console.error(error);
 
-    document.getElementById("popcorn").innerHTML =
-      '<div class="notice">Unable to load products right now.</div>';
+   document.getElementById("menu").innerHTML =
+  '<div class="notice">Unable to load products right now.</div>';
 
   }
 
