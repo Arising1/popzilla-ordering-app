@@ -1,1 +1,218 @@
-app.html
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  >
+
+  <meta name="theme-color" content="#d71920">
+
+  <title>Popzilla App</title>
+
+  <style>
+    :root {
+      --red: #d71920;
+      --gold: #f5b82e;
+      --cream: #fff8e8;
+      --dark: #191919;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cream);
+      color: var(--dark);
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #111;
+      color: white;
+      padding: 18px 20px;
+      text-align: center;
+    }
+
+    header img {
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
+    }
+
+    header h1 {
+      margin: 8px 0 3px;
+      font-size: 25px;
+    }
+
+    header p {
+      margin: 0;
+      color: #ddd;
+      font-size: 14px;
+    }
+
+    main {
+      width: 100%;
+      max-width: 520px;
+      margin: auto;
+      padding: 28px 20px 35px;
+      text-align: center;
+    }
+
+    .welcome {
+      margin-bottom: 25px;
+    }
+
+    .welcome h2 {
+      font-size: 30px;
+      margin: 0 0 8px;
+    }
+
+    .welcome p {
+      font-size: 17px;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .button {
+      display: block;
+      width: 100%;
+      padding: 18px;
+      margin: 14px 0;
+      border: 0;
+      border-radius: 14px;
+      font-size: 19px;
+      font-weight: 900;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .order {
+      background: var(--red);
+      color: white;
+    }
+
+    .pickup {
+      background: var(--gold);
+      color: #111;
+    }
+
+    .website {
+      background: #eee;
+      color: #111;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      margin-top: 25px;
+      box-shadow: 0 4px 15px #0001;
+    }
+
+    .card h3 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+
+    .card p {
+      margin: 8px 0;
+      line-height: 1.5;
+    }
+
+    footer {
+      margin-top: auto;
+      padding: 15px;
+      text-align: center;
+      font-size: 13px;
+      color: #666;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <header>
+
+    <img
+      src="/popzilla-logo.png"
+      alt="Popzilla Gourmet Popcorn & Fudge"
+    >
+
+    <h1>POPZILLA</h1>
+
+    <p>Gourmet Popcorn & Fudge</p>
+
+  </header>
+
+
+  <main>
+
+    <div class="welcome">
+
+      <h2>Welcome!</h2>
+
+      <p>
+        Fresh. Fun. Poppin'.
+        <br>
+        Order your favorite Popzilla treats.
+      </p>
+
+    </div>
+
+
+    <a
+      class="button order"
+      href="/"
+    >
+      🍿 ORDER NOW
+    </a>
+
+
+    <div class="card">
+
+      <h3>📍 Pickup</h3>
+
+      <p>
+        South Pekin, Illinois
+      </p>
+
+      <p>
+        Select your pickup date and time when placing your order.
+      </p>
+
+    </div>
+
+
+    <a
+      class="button website"
+      href="/"
+    >
+      🌐 Visit Popzilla Store
+    </a>
+
+  </main>
+
+
+  <footer>
+    Popzilla Gourmet Popcorn & Fudge
+  </footer>
+
+</div>
+
+</body>
+</html>
