@@ -357,6 +357,7 @@ input{
 let pin = "";
 let previousOrderIds = null;
 let alertsEnabled = false;
+let categories = [];
 
 const money = n =>
   Number(n || 0).toFixed(2);
@@ -1230,30 +1231,24 @@ async function loadProducts() {
             value="${Number(product.price).toFixed(2)}"
           >
 
-          <select
-            id="category-${product.id}"
-            style="
-              padding:12px;
-              border:1px solid #ccc;
-              border-radius:9px;
-            "
-          >
-            <option value="popcorn" ${product.category === "popcorn" ? "selected" : ""}>
-              🍿 Popcorn
-            </option>
-
-            <option value="fudge" ${product.category === "fudge" ? "selected" : ""}>
-              🍫 Fudge
-            </option>
-
-            <option value="shakeups" ${product.category === "shakeups" ? "selected" : ""}>
-              🍋 Lemon Shake Ups
-            </option>
-
-            <option value="other" ${product.category === "other" ? "selected" : ""}>
-              📦 Other
-            </option>
-          </select>
+     <select
+  id="category-${product.id}"
+  style="
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:9px;
+  "
+>
+  ${categories.map(category => `
+    <option
+      value="${category}"
+      ${product.category === category ? "selected" : ""}
+    >
+      ${category}
+    </option>
+  `).join("")}
+</select>
+         
 
         </div>
 
@@ -1563,7 +1558,7 @@ async function loadCategories() {
 
   try {
     const response = await fetch(
-      "/api/admin/products",
+      "/api/admin/categories",
       {
         headers: {
           "x-admin-pin": pin
@@ -1573,18 +1568,7 @@ async function loadCategories() {
 
     if (!response.ok) return;
 
-    const products = await response.json();
-
-    const categories = [];
-
-    products.forEach(product => {
-      if (
-        product.category &&
-        !categories.includes(product.category)
-      ) {
-        categories.push(product.category);
-      }
-    });
+    categories = await response.json();
 
     if (!categories.length) {
       box.innerHTML =
@@ -1606,6 +1590,19 @@ async function loadCategories() {
         </span>
       `).join("");
 
+    const select =
+      document.getElementById("productCategory");
+
+    if (select) {
+      select.innerHTML =
+        '<option value="">Select Category</option>' +
+        categories.map(category => `
+          <option value="${escapeHtml(category)}">
+            ${escapeHtml(category)}
+          </option>
+        `).join("");
+    }
+
   } catch (error) {
     console.error(error);
   }
@@ -1617,17 +1614,46 @@ async function addCategory() {
   const name =
     input.value.trim();
 
+
+
   if (!name) {
     alert("Please enter a category name.");
     return;
   }
 
-  alert(
-    "Category name entered: " + name +
-    "\n\nWe will connect this to the product system next."
-  );
+  try {
+    const response = await fetch(
+      "/api/admin/categories",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-pin": pin
+        },
+        body: JSON.stringify({
+          name
+        })
+      }
+    );
 
-  input.value = "";
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.error || "Could not add category.");
+      return;
+    }
+
+    input.value = "";
+
+    await loadCategories();
+
+    alert("Category added: " + name);
+
+  } catch (error) {
+    console.error(error);
+    alert("Could not connect to the server.");
+  
+}
 }
 </script>
 
