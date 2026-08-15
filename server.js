@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 
 const DATA = path.join(__dirname, "orders.json");
 const PRODUCTS = path.join(__dirname, "products.json");
-
+const CATEGORIES = path.join(__dirname, "categories.json");
 const stripe = process.env.STRIPE_SECRET_KEY
   ? Stripe(process.env.STRIPE_SECRET_KEY)
   : null;
@@ -55,7 +55,24 @@ function writeProducts(products) {
     JSON.stringify(products, null, 2)
   );
 }
+// ==================== CATEGORIES ====================
 
+function readCategories() {
+  try {
+    return JSON.parse(
+      fs.readFileSync(CATEGORIES, "utf8")
+    );
+  } catch {
+    return [];
+  }
+}
+
+function writeCategories(categories) {
+  fs.writeFileSync(
+    CATEGORIES,
+    JSON.stringify(categories, null, 2)
+  );
+}
 // ==================== ADMIN SECURITY ====================
 
 function requireAdmin(req, res, next) {
@@ -134,7 +151,52 @@ app.patch(
     res.json(item);
   }
 );
+// ==================== CATEGORIES API ====================
 
+app.get(
+  "/api/admin/categories",
+  requireAdmin,
+  (req, res) => {
+    res.json(readCategories());
+  }
+);
+
+app.post(
+  "/api/admin/categories",
+  requireAdmin,
+  (req, res) => {
+    const name =
+      String(req.body.name || "").trim();
+
+    if (!name) {
+      return res.status(400).json({
+        error: "Category name is required"
+      });
+    }
+
+    const categories = readCategories();
+
+    const exists = categories.some(
+      category =>
+        category.toLowerCase() === name.toLowerCase()
+    );
+
+    if (exists) {
+      return res.status(400).json({
+        error: "Category already exists"
+      });
+    }
+
+    categories.push(name);
+
+    writeCategories(categories);
+
+    res.json({
+      ok: true,
+      category: name
+    });
+  }
+);
 // ==================== PRODUCTS API ====================
 // Public products for customer store
 app.get(
