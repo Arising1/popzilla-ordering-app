@@ -299,7 +299,11 @@ main{
       Local delivery — $5.00
     </option>
   </select>
-
+<input
+  class="field"
+  id="pickupDate"
+  type="date"
+>
   <select
     class="field"
     id="pickupTime"
@@ -557,7 +561,8 @@ function renderCart(){
 
   document.getElementById("pickupTime").style.display =
     delivery ? "none" : "block";
-
+document.getElementById("pickupDate").style.display =
+  delivery ? "none" : "block";
 }
 
 
@@ -628,14 +633,15 @@ async function makeOrder(payment){
 
   const pickupTime =
     document.getElementById("pickupTime").value;
-
-  if(
-    method === "pickup" &&
-    !pickupTime
-  ){
+const pickupDate =
+  document.getElementById("pickupDate").value;
+ if(
+  method === "pickup" &&
+  (!pickupDate || !pickupTime)
+){
 
     alert(
-      "Please select a pickup time."
+    "Please select a pickup date and time."
     );
 
     return null;
@@ -670,6 +676,7 @@ async function makeOrder(payment){
       address:
         document.getElementById("address").value,
 
+          pickupDate,
       pickupTime
 
     },
