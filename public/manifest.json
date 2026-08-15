@@ -1,1 +1,16 @@
-
+{
+  "name": "Popzilla Gourmet Popcorn & Fudge",
+  "short_name": "Popzilla",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fff8e8",
+  "theme_color": "#d71920",
+  "description": "Popzilla Gourmet Popcorn & Fudge online ordering",
+  "icons": [
+    {
+      "src": "/popzilla-logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
