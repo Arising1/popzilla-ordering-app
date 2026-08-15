@@ -658,8 +658,8 @@ async function load(){
       );
 
 
-    /* Orders */
 
+}
     document.getElementById(
       "orders"
     ).innerHTML =
@@ -718,8 +718,17 @@ async function load(){
     : "📍 Pickup"
   }
 </p>
-
 ${
+  order.fulfillment?.method === "pickup" &&
+  order.fulfillment?.pickupDate
+  ? `
+    <p>
+      <b>📅 Pickup Date:</b>
+      ${order.fulfillment.pickupDate}
+    </p>
+  `
+  : ""
+}
   order.fulfillment?.method === "pickup" &&
   order.fulfillment?.pickupTime
   ? `
@@ -729,6 +738,8 @@ ${
     </p>
   `
   : ""
+
+
 }
 
           <ul class="items">
@@ -1004,6 +1015,15 @@ ${
   ? "🚗 LOCAL DELIVERY"
   : "📍 PICKUP — SOUTH PEKIN"
 }
+${
+  !delivery && order.fulfillment?.pickupDate
+  ? `
+    <br>
+    <b>📅 Pickup Date:</b>
+    ${order.fulfillment.pickupDate}
+  `
+  : ""
+}
 
 ${
   !delivery && pickupTime
@@ -1014,6 +1034,7 @@ ${
   `
   : ""
 }
+
 
 ${
   delivery && order.fulfillment?.address
