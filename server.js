@@ -406,7 +406,6 @@ app.post(
     });
   }
 );
-
 // ==================== ADMIN PAGE ====================
 
 app.get("/admin", (req, res) => {
@@ -415,6 +414,18 @@ app.get("/admin", (req, res) => {
       __dirname,
       "public",
       "admin.html"
+    )
+  );
+});
+
+// ==================== POPZILLA APP ====================
+
+app.get("/app.html", (req, res) => {
+  res.sendFile(
+    path.join(
+      __dirname,
+      "public",
+      "app.html"
     )
   );
 });
@@ -430,6 +441,7 @@ app.use((req, res) => {
     )
   );
 });
+
 
 // ==================== START SERVER ====================
 
