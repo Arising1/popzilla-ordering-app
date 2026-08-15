@@ -729,6 +729,8 @@ ${
   `
   : ""
 }
+
+${
   order.fulfillment?.method === "pickup" &&
   order.fulfillment?.pickupTime
   ? `
@@ -738,10 +740,7 @@ ${
     </p>
   `
   : ""
-
-
 }
-
           <ul class="items">
 
             ${
@@ -804,15 +803,8 @@ ${
                 ? "💵 Pay at Pickup"
                 : "💳 Online"
               }
-            </b><b style="padding:9px">
-  ${
-    order.payment ===
-    "pay_at_pickup"
-    ? "💵 Pay at Pickup"
-    : "💳 Online"
-  }
-</b>
 
+</b>
 <button
   class="primary"
   onclick='printOrder(${JSON.stringify(order)})'
